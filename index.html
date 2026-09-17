@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MM2 Trade Hub - Стильный синий трейд</title>
+    <style>
+        :root {
+            --bg-main: #0a0f1d;
+            --bg-card: #121c33;
+            --bg-card-hover: #1a2847;
+            --accent-blue: #0066ff;
+            --accent-blue-hover: #0052cc;
+            --accent-cyan: #00d2ff;
+            --text-main: #ffffff;
+            --text-secondary: #94a3b8;
+            --border-color: #1e3a8a;
+            --danger-red: #ef4444;
+            --success-green: #22c55e;
+            --black-theme: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(135deg, #091026, #12224a);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 102, 255, 0.2);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button, .btn {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+            box-shadow: 0 0 10px rgba(0, 102, 255, 0.4);
+        }
+
+        button:hover, .btn:hover {
+            background-color: var(--accent-blue-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 0 15px rgba(0, 102, 255, 0.7);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-red);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.7);
+        }
+
+        .btn-secondary {
+            background-color: #334155;
+            box-shadow: none;
+        }
+        .btn-secondary:hover {
+            background-color: #475569;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px;
+        }
+
+        /* Модальные окна со сглаженными краями */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 15px 40px rgba(0, 102, 255, 0.3);
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--accent-cyan);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 8px rgba(0, 210, 255, 0.3);
+        }
+
+        /* Слоты трейдов */
+        .trade-grid-slots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .trade-slot {
+            height: 90px;
+            background: var(--bg-main);
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .trade-slot:hover {
+            border-color: var(--accent-cyan);
+            background: var(--bg-card-hover);
+        }
+
+        .trade-slot img {
+            max-height: 50px;
+            max-width: 50px;
+            object-fit: contain;
+        }
+
+        .trade-slot span {
+            font-size: 11px;
+            margin-top: 4px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        /* Выбор предметов */
+        .items-selector-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+
+        .item-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .item-card:hover, .item-card.selected {
+            border-color: var(--accent-cyan);
+            background: var(--bg-card-hover);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+        }
+
+        .item-card img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 5px;
+        }
+
+        .item-card .item-name {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Список трейдов */
+        .trades-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .trade-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .trade-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 102, 255, 0.2);
+        }
+
+        .trade-header-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .trade-items-preview {
+            display: flex;
+            gap: 8px;
+            background: var(--bg-main);
+            padding: 10px;
+            border-radius: 8px;
+            min-height: 60px;
+            align-items: center;
+        }
+
+        .mini-item {
+            width: 45px;
+            height: 45px;
+            background: var(--bg-card);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .mini-item img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+        }
+
+        /* Чат */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-msg {
+            background: var(--bg-card);
+            padding: 10px 14px;
+            border-radius: 8px;
+            max-width: 80%;
+            border: 1px solid var(--border-color);
+        }
+
+        .chat-msg.system {
+            background: rgba(0, 210, 255, 0.1);
+            color: var(--accent-cyan);
+            text-align: center;
+            max-width: 100%;
+            font-size: 13px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 10px;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            gap: 10px;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: white;
+        }
+
+        .close-modal-x {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        .close-modal-x:hover {
+            color: white;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-badge {
+            background: #eab308;
+            color: black;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="app.switchTab('home')">MM2 TRADE HUB</div>
+        <div class="nav-links" id="headerNav">
+            <!-- Динамически заполняется -->
+        </div>
+    </header>
+
+    <div class="container" id="mainContainer">
+        <!-- Контент меняется через JS -->
+    </div>
+
+    <!-- Модальные окна создаются динамически здесь -->
+    <div id="modalRoot"></div>
+
+<script>
+    // База данных MM2 предметов (Godlies, Ancients, Vintages) - исключая комонки, анкомонки, редкие, эпические и легендарные
+    const MM2_ITEMS = [
+        { id: 'harvester', name: 'Harvester', type: 'Ancient', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/a/a2/Harvester.png' },
+        { id: 'corrupt', name: 'Corrupt', type: 'Godly', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/5/5e/CorruptKnife.png' },
+        { id: 'evergun', name: 'Evergun', type: 'Godly', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/b/b5/Evergun.png' },
+        { id: 'everset', name: 'Eversythe', type: 'Godly', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/6/62/Eversythe.png' },
+        { id: 'bat', name: 'Bat', type: 'Godly', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/9/91/Bat2023.png' },
+        { id: 'icepiercer', name: 'Icepiercer', type: 'Ancient', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/3/30/Icepiercer.png' },
+        { id: 'swirlgun', name: 'Swirly Gun', type: 'Godly', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/0/07/SwirlyGun.png' },
+        { id: 'swirlyaxe', name: 'Swirly Axe', type: 'Godly', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/8/87/SwirlyAxe.png' },
+        { id: 'plastik', name: 'Plasmablade', type: 'Godly', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/9/98/Plasmablade.png' },
+        { id: 'watergun', name: 'Watergun', type: 'Godly', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/0/07/Watergun.png' },
+        { id: 'sakura', name: 'Sakura Set Knife', type: 'Godly', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/c/c5/SakuraKnife.png' },
+        { id: 'chromablade', name: 'Chroma Candleflame', type: 'Godly', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/2/22/ChromaCandleflame.png' },
+        { id: 'spectre', name: 'Spectre', type: 'Ancient', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/3/3f/SpectreGun.png' },
+        { id: 'traveler', name: 'Traveler Axe', type: 'Ancient', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/4/4c/TravelerAxe.png' },
+        { id: 'elderwood', name: 'Elderwood Blade', type: 'Godly', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/7/7b/ElderwoodBlade.png' },
+        { id: 'flowerwood', name: 'Flowerwood Gun', type: 'Godly', img: 'https://static.wikia.nocookie.net/murdermidnight2/images/5/54/FlowerwoodGun.png' }
+    ];
+
+    class App {
+        constructor() {
+            this.initStorage();
+            this.currentTab = 'home';
+            this.activeModal = null;
+            this.render();
+        }
+
+        initStorage() {
+            // Создание дефолтных данных, если их нет
+            if (!localStorage.getItem('mm2_users')) {
+                const defaultUsers = [
+                    { username: 'KerZikUs', roblox: 'CKALKA1013', password: '800hi900', isAdmin: true, permissions: { deleteTrades: true, handleReports: true, addAdmins: true } }
+                ];
+                localStorage.setItem('mm2_users', JSON.stringify(defaultUsers));
+            }
+            if (!localStorage.getItem('mm2_currentUser')) {
+                localStorage.setItem('mm2_currentUser', null);
+            }
+            if (!localStorage.getItem('mm2_trades')) {
+                localStorage.setItem('mm2_trades', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('mm2_finishedTrades')) {
+                localStorage.setItem('mm2_finishedTrades', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('mm2_settings')) {
+                localStorage.setItem('mm2_settings', JSON.stringify({ colorTheme: 'blue', isBlackThemeLinked: true }));
+            }
+            if (!localStorage.getItem('mm2_permissions')) {
+                localStorage.setItem('mm2_permissions', JSON.stringify({}));
+            }
+        }
+
+        getCurrentUser() {
+            const user = localStorage.getItem('mm2_currentUser');
+            return user && user !== 'null' ? JSON.parse(user) : null;
+        }
+
+        getUsers() { return JSON.parse(localStorage.getItem('mm2_users')); }
+        saveUsers(users) { localStorage.setItem('mm2_users', JSON.stringify(users)); }
+        
+        getTrades() { return JSON.parse(localStorage.getItem('mm2_trades')); }
+        saveTrades(trades) { localStorage.setItem('mm2_trades', JSON.stringify(trades)); }
+
+        getFinishedTrades() { return JSON.parse(localStorage.getItem('mm2_finishedTrades')); }
+        saveFinishedTrades(f) { localStorage.setItem('mm2_finishedTrades', JSON.stringify(f)); }
+
+        getSettings() { return JSON.parse(localStorage.getItem('mm2_settings')); }
+        saveSettings(s) { localStorage.setItem('mm2_settings', JSON.stringify(s)); }
+
+        switchTab(tab) {
+            this.currentTab = tab;
+            this.render();
+        }
+
+        render() {
+            this.renderHeader();
+            this.renderContent();
+            this.applyThemeColors();
+        }
+
+        applyThemeColors() {
+            const settings = this.getSettings();
+            if (settings.isBlackThemeLinked) {
+                document.documentElement.style.setProperty('--bg-main', '#000000');
+                document.documentElement.style.setProperty('--bg-card', '#0a0a0a');
+                document.documentElement.style.setProperty('--bg-card-hover', '#171717');
+                document.documentElement.style.setProperty('--border-color', '#262626');
+            } else {
+                document.documentElement.style.setProperty('--bg-main', '#0a0f1d');
+                document.documentElement.style.setProperty('--bg-card', '#121c33');
+                document.documentElement.style.setProperty('--bg-card-hover', '#1a2847');
+                document.documentElement.style.setProperty('--border-color', '#1e3a8a');
+            }
+            
+            if (settings.colorTheme === 'cyan') {
+                document.documentElement.style.setProperty('--accent-blue', '#0284c7');
+                document.documentElement.style.setProperty('--accent-blue-hover', '#0369a1');
+            } else if (settings.colorTheme === 'purple') {
+                document.documentElement.style.setProperty('--accent-blue', '#7c3aed');
+                document.documentElement.style.setProperty('--accent-blue-hover', '#6d28d9');
+            } else if (settings.colorTheme === 'emerald') {
+                document.documentElement.style.setProperty('--accent-blue', '#059669');
+                document.documentElement.style.setProperty('--accent-blue-hover', '#047857');
+            } else {
+                // Классический синий
+                document.documentElement.style.setProperty('--accent-blue', '#0066ff');
+                document.documentElement.style.setProperty('--accent-blue-hover', '#0052cc');
+            }
+        }
+
+        renderHeader() {
+            const user = this.getCurrentUser();
+            const nav = document.getElementById('headerNav');
+            
+            if (!user) {
+                nav.innerHTML = `
+                    <button class="btn btn-secondary" onclick="app.openLoginModal()">Вход</button>
+                    <button class="btn" onclick="app.openRegisterModal()">Регистрация</button>
+                `;
+            } else {
+                let adminBtn = '';
+                const users = this.getUsers();
+                const fullUser = users.find(u => u.username === user.username);
+                if (fullUser && (fullUser.isAdmin || fullUser.canManageAdmins || fullUser.canManageTrades)) {
+                    adminBtn = `<button class="btn" style="background: #eab308; color: black;" onclick="app.switchTab('adminPanel')">Админ Панель</button>`;
+                }
+
+                nav.innerHTML = `
+                    <button class="btn btn-secondary" onclick="app.switchTab('activeTrades')">Ваши активные трейды</button>
+                    <button class="btn btn-secondary" onclick="app.switchTab('finishedTrades')">Ваши законченные трейды</button>
+                    <button class="btn btn-secondary" onclick="app.switchTab('settings')">Настройки</button>
+                    ${adminBtn}
+                    <div style="font-size: 13px; margin-left: 10px;">
+                        <div><b>${user.username}</b> ${fullUser?.isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}</div>
+                        <div style="color: var(--text-secondary);">Roblox: ${user.roblox}</div>
+                    </div>
+                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="app.logout()">Выйти</button>
+                `;
+            }
+        }
+
+        renderContent() {
+            const container = document.getElementById('mainContainer');
+            
+            if (this.currentTab === 'home') {
+                container.innerHTML = `
+                    <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h1 style="color: var(--accent-cyan); margin-bottom: 10px;">MM2 Трейд Маркет</h1>
+                            <p style="color: var(--text-secondary);">Выставляйте свои предложения, обменивайте Godly вещи и общайтесь с игроками безопасной сделкой!</p>
+                        </div>
+                        <button class="btn" style="font-size: 16px; padding: 15px 30px;" onclick="app.openCreateTradeModal()">Выставить предложение по трейду</button>
+                    </div>
+                    <h2 style="margin-bottom: 15px;">Все предложения для трейда</h2>
+                    <div class="trades-container" id="tradesListContainer"></div>
+                `;
+                this.renderTradesList();
+            } else if (this.currentTab === 'activeTrades') {
+                container.innerHTML = `
+                    <h2>Ваши активные трейды</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 20px;">Управляйте созданными вами предложениями.</p>
+                    <div class="trades-container" id="userActiveTradesContainer"></div>
+                `;
+                this.renderUserActiveTrades();
+            } else if (this.currentTab === 'finishedTrades') {
+                container.innerHTML = `
+                    <h2>Ваши законченные трейды</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 20px; ">История завершенных обменов.</p>
+                    <div class="trades-container" id="userFinishedTradesContainer"></div>
+                `;
+                this.renderUserFinishedTrades();
+            } else if (this.currentTab === 'settings') {
+                this.renderSettingsPage(container);
+            } else if (this.currentTab === 'adminPanel') {
+                this.renderAdminPage(container);
+            }
+        }
+
+        // Рендер списка трейдов на главной
+        renderTradesList() {
+            const listContainer = document.getElementById('tradesListContainer');
+            if (!listContainer) return;
+            const trades = this.getTrades().filter(t => t.status === 'active');
+            
+            if (trades.length === 0) {
+                listContainer.innerHTML = `<p style="color: var(--text-secondary);">Активных трейдов пока нет. Будьте первыми!</p>`;
+                return;
+            }
+
+            listContainer.innerHTML = trades.map(t => `
+                <div class="trade-card" onclick="app.openTradeDetail('${t.id}')">
+                    <div class="trade-header-info">
+                        <span>Сайт: <b>${t.username}</b></span>
+                        <span>Roblox: <b>${t.roblox}</b></span>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: var(--accent-cyan); margin-bottom: 5px;">Предложение игрока:</div>
+                        <div class="trade-items-preview">
+                            ${t.myOffer.length > 0 ? t.myOffer.map(item => `
+                                <div class="mini-item"><img src="${item.img}" title="${item.name}"></div>
+                            `).join('') : '<span style="font-size: 12px; color: var(--text-secondary);">Пусто</span>'}
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 5px;">Желает получить: ${t.wantAlternative ? '(Готов рассмотреть другие вещи)' : '(Строго эти вещи)'}</div>
+                        <div class="trade-items-preview">
+                            ${t.theirOffer.length > 0 ? t.theirOffer.map(item => `
+                                <div class="mini-item"><img src="${item.img}" title="${item.name}"></div>
+                            `).join('') : '<span style="font-size: 12px; color: var(--text-secondary);">Любые вещи</span>'}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        renderUserActiveTrades() {
+            const container = document.getElementById('userActiveTradesContainer');
+            if (!container) return;
+            const user = this.getCurrentUser();
+            if (!user) return;
+            const trades = this.getTrades().filter(t => t.username === user.username && t.status === 'active');
+
+            if (trades.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-secondary);">У вас нет активных трейдов.</p>`;
+                return;
+            }
+
+            container.innerHTML = trades.map(t => `
+                <div class="trade-card">
+                    <div class="trade-header-info">
+                        <span>Статус: <b style="color: var(--success-green);">Активен</b></span>
+                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 11px;" onclick="app.deleteTrade('${t.id}')">Удалить</button>
+                    </div>
+                    <div class="trade-items-preview">
+                        ${t.myOffer.map(item => `<div class="mini-item"><img src="${item.img}" title="${item.name}"></div>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        renderUserFinishedTrades() {
+            const container = document.getElementById('userFinishedTradesContainer');
+            if (!container) return;
+            const user = this.getCurrentUser();
+            if (!user) return;
+            const finished = this.getFinishedTrades().filter(t => t.user1 === user.username || t.user2 === user.username);
+
+            if (finished.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-secondary);">У вас нет законченных трейдов.</p>`;
+                return;
+            }
+
+            container.innerHTML = finished.map(f => `
+                <div class="trade-card">
+                    <div class="trade-header-info">
+                        <span>Сделка между: <b>${f.user1}</b> и <b>${f.user2}</b></span>
+                        <b style="color: var(--success-green);">Завершено успешно</b>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        renderSettingsPage(container) {
+            const settings = this.getSettings();
+            container.innerHTML = `
+                <h2>Настройки сайта</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">Настройте внешний вид и безопасность учетной записи.</p>
+                
+                <div class="card">
+                    <h3 style="margin-bottom: 15px; color: var(--accent-cyan);">Настройки цвета и темы</h3>
+                    <div class="form-group">
+                        <label>Цветовая схема сайта</label>
+                        <select class="form-control" id="settingThemeColor" onchange="app.updateThemeSetting()">
+                            <option value="blue" ${settings.colorTheme==='blue'?'selected':''}>Классический синий</option>
+                            <option value="cyan" ${settings.colorTheme==='cyan'?'selected':''}>Небесно-голубой</option>
+                            <option value="purple" ${settings.colorTheme==='purple'?'selected':''}>Фиолетово-синий</option>
+                            <option value="emerald" ${settings.colorTheme==='emerald'?'selected':''}>Изумрудный</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 15px;">
+                        <input type="checkbox" id="settingBlackLink" ${settings.isBlackThemeLinked?'checked':''} onchange="app.updateThemeSetting()">
+                        <label for="settingBlackLink" style="margin: 0; cursor: pointer;">Связка всех цветов с черным фоном сайта</label>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 15px; color: var(--accent-cyan);">Управление данными</h3>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-danger" onclick="app.userDeleteAllActiveTrades()">Удаление всех активных трейдов</button>
+                        <button class="btn btn-danger" onclick="app.userDeleteTradeHistory()">Удаление истории трейдов</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 15px; color: var(--accent-cyan);">Безопасность</h3>
+                    <button class="btn btn-secondary" onclick="app.openChangePasswordModal()">Изменить пароль</button>
+                </div>
+            `;
+        }
+
+        renderAdminPage(container) {
+            const user = this.getCurrentUser();
+            const users = this.getUsers();
+            const fullUser = users.find(u => u.username === user?.username);
+
+            if (!fullUser || (!fullUser.isAdmin && !fullUser.canManageAdmins && !fullUser.canManageTrades)) {
+                container.innerHTML = `<h2>Доступ запрещен</h2>`;
+                return;
+            }
+
+            container.innerHTML = `
+                <h2>Панель Администратора (${user.username})</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">Полное управление активными трейдами, жалобами и правами сотрудников.</p>
+
+                <div class="card">
+                    <h3 style="color: var(--accent-cyan); margin-bottom: 15px;">Управление активными трейдами</h3>
+                    <div id="adminTradesList"></div>
+                </div>
+
+                ${fullUser.isAdmin || fullUser.canManageAdmins ? `
+                <div class="card">
+                    <h3 style="color: var(--accent-cyan); margin-bottom: 15px;">Подразделение администраторов</h3>
+                    <div class="form-group">
+                        <label>Поиск пользователя</label>
+                        <input type="text" class="form-control" id="adminUserSearch" placeholder="Введите ник..." oninput="app.filterAdminUsers(this.value)">
+                    </div>
+                    <div id="adminUsersListContainer" style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;"></div>
+                </div>
+                ` : ''}
+            `;
+            this.renderAdminTrades();
+            if (fullUser.isAdmin || fullUser.canManageAdmins) this.renderAdminUsersList(users);
+        }
+
+        renderAdminTrades() {
+            const container = document.getElementById('adminTradesList');
+            if (!container) return;
+            const trades = this.getTrades();
+            if (trades.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-secondary);">Нет активных или проходящих трейдов.</p>`;
+                return;
+            }
+
+            container.innerHTML = trades.map(t => `
+                <div style="background: var(--bg-main); padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span>Создатель: <b>${t.username}</b> | Статус: <b>${t.status}</b></span>
+                        <div style="font-size: 12px; color: var(--text-secondary);">ID трейда: ${t.id}</div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="app.adminDeleteTrade('${t.id}')">Удалить трейд</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        renderAdminUsersList(users, query = '') {
+            const container = document.getElementById('adminUsersListContainer');
+            if (!container) return;
+            const filtered = users.filter(u => u.username.toLowerCase().includes(query.toLowerCase()) && u.username !== 'KerZikUs');
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-secondary);">Пользователи не найдены.</p>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(u => `
+                <div style="background: var(--bg-main); padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <b>${u.username}</b> (Roblox: ${u.roblox}) ${u.isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <label style="font-size: 12px; display:flex; align-items:center; gap:5px; cursor:pointer;">
+                            <input type="checkbox" ${u.canManageTrades ? 'checked' : ''} onchange="app.toggleAdminPerm('${u.username}', 'canManageTrades', this.checked)"> Удаление/управление трейдами
+                        </label>
+                        <label style="font-size: 12px; display:flex; align-items:center; gap:5px; cursor:pointer;">
+                            <input type="checkbox" ${u.canManageAdmins ? 'checked' : ''} onchange="app.toggleAdminPerm('${u.username}', 'canManageAdmins', this.checked)"> Назначение админов
+                        </label>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        filterAdminUsers(q) {
+            const users = this.getUsers();
+            this.renderAdminUsersList(users, q);
+        }
+
+        toggleAdminPerm(username, permKey, val) {
+            let users = this.getUsers();
+            users = users.map(u => {
+                if (u.username === username) u[permKey] = val;
+                return u;
+            });
+            this.saveUsers(users);
+        }
+
+        // Авторизация и регистрация
+        openRegisterModal() {
+            this.showModal(`
+                <div class="modal-box">
+                    <span class="close-modal-x" onclick="app.closeModal()">&times;</span>
+                    <div class="modal-title">Регистрация на сайте</div>
+                    <div class="form-group">
+                        <label>Логин на сайте</label>
+                        <input type="text" class="form-control" id="regLogin" placeholder="Пример: ProTrader">
+                    </div>
+                    <div class="form-group">
+                        <label>Ник в Roblox</label>
+                        <input type="text" class="form-control" id="regRoblox" placeholder="Пример: RobloxUser123">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль</label>
+                        <input type="password" class="form-control" id="regPassword" placeholder="••••••••">
+                    </div>
+                    <button class="btn" style="width: 100%; margin-top: 10px;" onclick="app.handleRegister()">Зарегистрироваться</button>
+                </div>
+            `);
+        }
+
+        handleRegister() {
+            const login = document.getElementById('regLogin').value.trim();
+            const roblox = document.getElementById('regRoblox').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+
+            if (!login || !roblox || !password) {
+                alert('Пожалуйста, заполните все поля!');
+                return;
+            }
+
+            let users = this.getUsers();
+            if (users.some(u => u.username === login)) {
+                alert('Пользователь с таким логином уже существует!');
+                return;
+            }
+
+            const newUser = { username: login, roblox, password, isAdmin: false, canManageTrades: false, canManageAdmins: false };
+            users.push(newUser);
+            this.saveUsers(users);
+            localStorage.setItem('mm2_currentUser', JSON.stringify({ username: login, roblox }));
+            this.closeModal();
+            this.render();
+            // Сразу открываем создание трейда как указано в ТЗ
+            this.openCreateTradeModal();
+        }
+
+        openLoginModal() {
+            this.showModal(`
+                <div class="modal-box">
+                    <span class="close-modal-x" onclick="app.closeModal()">&times;</span>
+                    <div class="modal-title">Вход в аккаунт</div>
+                    <div class="form-group">
+                        <label>Логин на сайте</label>
+                        <input type="text" class="form-control" id="loginUsername" placeholder="Ваш логин">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль</label>
+                        <input type="password" class="form-control" id="loginPassword" placeholder="Пароль">
+                    </div>
+                    <button class="btn" style="width: 100%; margin-top: 10px;" onclick="app.handleLogin()">Войти</button>
+                </div>
+            `);
+        }
+
+        handleLogin() {
+            const login = document.getElementById('loginUsername').value.trim();
+            const pass = document.getElementById('loginPassword').value.trim();
+            const users = this.getUsers();
+
+            const found = users.find(u => u.username === login && u.password === pass);
+            if (!found) {
+                alert('Неверный логин или пароль!');
+                return;
+            }
+
+            localStorage.setItem('mm2_currentUser', JSON.stringify({ username: found.username, roblox: found.roblox }));
+            this.closeModal();
+            this.render();
+        }
+
+        logout() {
+            localStorage.setItem('mm2_currentUser', null);
+            this.switchTab('home');
+        }
+
+        // Создание трейда
+        openCreateTradeModal(selectedMyItems = [], wantAlt = true, theirItems = []) {
+            const user = this.getCurrentUser();
+            if (!user) {
+                this.openRegisterModal();
+                return;
+            }
+
+            window.tempTradeMyOffer = selectedMyItems;
+            window.tempTradeTheirOffer = theirItems;
+            window.tempWantAlternative = wantAlt;
+
+            this.showModal(`
+                <div class="modal-box" style="max-width: 650px;">
+                    <span class="close-modal-x" onclick="app.closeModal()">&times;</span>
+                    <div class="modal-title">Создание предложения по трейду</div>
+                    
+                    <div style="font-size: 14px; font-weight: 600; margin-bottom: 5px;">Ваше предложение (до 4 вещей):</div>
+                    <div class="trade-grid-slots" id="createMySlots">
+                        ${this.renderSlotsHtml(window.tempTradeMyOffer, 'my')}
+                    </div>
+
+                    <div style="font-size: 14px; font-weight: 600; margin: 15px 0 5px 0;">Предложение другого игрока (что вы хотите получить):</div>
+                    <div class="trade-grid-slots" id="createTheirSlots">
+                        ${this.renderSlotsHtml(window.tempTradeTheirOffer, 'their')}
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <div style="font-size: 14px; margin-bottom: 8px;">Хотите чтобы другие люди предлагали другие вещи, если у них нет тех вещей которые вы выбрали в меню?</div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn ${window.tempWantAlternative ? '' : 'btn-secondary'}" onclick="app.setWantAlt(true)">Да хочу</button>
+                            <button class="btn ${!window.tempWantAlternative ? 'btn-danger' : 'btn-secondary'}" onclick="app.setWantAlt(false)">Нет не хочу</button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px;">
+                        <button class="btn btn-secondary" onclick="app.closeModal()">Отмена</button>
+                        <button class="btn" onclick="app.publishTrade()">Опубликовать трейд</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        renderSlotsHtml(items, type) {
+            let html = '';
+            for (let i = 0; i < 4; i++) {
+                if (items[i]) {
+                    html += `
+                        <div class="trade-slot" onclick="app.openItemSelector('${type}', ${i})">
+                            <img src="${items[i].img}">
+                            <span>${items[i].name}</span>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="trade-slot" onclick="app.openItemSelector('${type}', ${i})">
+                            <span style="color: var(--accent-cyan); font-weight: 600;">+ Добавить предмет</span>
+                        </div>
+                    `;
+                }
+            }
+            return html;
+        }
+
+        setWantAlt(val) {
+            window.tempWantAlternative = val;
+            this.openCreateTradeModal(window.tempTradeMyOffer, window.tempWantAlternative, window.tempTradeTheirOffer);
+        }
+
+        openItemSelector(type, slotIndex) {
+            window.selectingType = type;
+            window.selectingSlotIndex = slotIndex;
+
+            this.showModal(`
+                <div class="modal-box" style="max-width: 600px;">
+                    <span class="close-modal-x" onclick="app.closeModal()">&times;</span>
+                    <div class="modal-title">Выберите оружие в MM2</div>
+                    <div class="items-selector-grid">
+                        ${MM2_ITEMS.map(item => `
+                            <div class="item-card" onclick="app.selectItemForSlot('${item.id}')">
+                                <img src="${item.img}">
+                                <div class="item-name">${item.name}</div>
+                                <div style="font-size: 10px; color: var(--text-secondary);">${item.type}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <button class="btn btn-secondary" onclick="app.closeModal()">Отмена</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        selectItemForSlot(itemId) {
+            const item = MM2_ITEMS.find(i => i.id === itemId);
+            if (!item) return;
+
+            if (window.selectingType === 'my') {
+                if (window.tempTradeMyOffer.length <= window.selectingSlotIndex) {
+                    window.tempTradeMyOffer.push(item);
+                } else {
+                    window.tempTradeMyOffer[window.selectingSlotIndex] = item;
+                }
+            } else {
+                if (window.tempTradeTheirOffer.length <= window.selectingSlotIndex) {
+                    window.tempTradeTheirOffer.push(item);
+                } else {
+                    window.tempTradeTheirOffer[window.selectingSlotIndex] = item;
+                }
+            }
+
+            this.openCreateTradeModal(window.tempTradeMyOffer, window.tempWantAlternative, window.tempTradeTheirOffer);
+        }
+
+        publishTrade() {
+            if (!window.tempTradeMyOffer || window.tempTradeMyOffer.length === 0) {
+                alert('Добавьте хотя бы один предмет в ваше предложение!');
+                return;
+            }
+
+            const user = this.getCurrentUser();
+            const trades = this.getTrades();
+            const newTrade = {
+                id: 'trade_' + Date.now(),
+                username: user.username,
+                roblox: user.roblox,
+                myOffer: window.tempTradeMyOffer,
+                theirOffer: window.tempTradeTheirOffer,
+                wantAlternative: window.tempWantAlternative,
+                status: 'active',
+                messages: []
+            };
+
+            trades.push(newTrade);
+            this.saveTrades(trades);
+            this.closeModal();
+            this.switchTab('home');
+            alert('Трейд успешно опубликован в трейд листе!');
+        }
+
+        deleteTrade(tradeId) {
+            let trades = this.getTrades();
+            trades = trades.filter(t => t.id !== tradeId);
+            this.saveTrades(trades);
+            this.render();
+        }
+
+        // Просмотр чужого трейда и интерактив
+        openTradeDetail(tradeId) {
+            const user = this.getCurrentUser();
+            if (!user) {
+                this.openRegisterModal();
+                return;
+            }
+
+            const trades = this.getTrades();
+            const trade = trades.find(t => t.id === tradeId);
+            if (!trade) return;
+
+            window.activeTradeSession = trade;
+
+            this.showModal(`
+                <div class="modal-box" style="max-width: 700px; border-radius: 16px;">
+                    <span class="close-modal-x" onclick="app.closeModal()">&times;</span>
+                    <div class="flex-between" style="margin-bottom: 15px;">
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Ник на сайте: <b style="color:white;">${trade.username}</b></div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Ник в Roblox: <b style="color:var(--accent-cyan);">${trade.roblox}</b></div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button class="btn btn-secondary" style="flex:1;" onclick="app.promptAcceptTradeModal('${trade.id}')">Принять трейд</button>
+                        <button class="btn" style="flex:1;" onclick="app.openCounterOfferModal('${trade.id}')">Предложить свои предметы</button>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button class="btn btn-danger" style="flex:1;" onclick="app.promptRejectTradeModal('${trade.id}')">Отклонить предложение на трейд</button>
+                    </div>
+
+                    <div class="chat-container">
+                        <div class="chat-messages" id="tradeChatMessages">
+                            ${trade.messages.map(m => `<div class="chat-msg ${m.system ? 'system' : ''}"><b>${m.sender}:</b> ${m.text}</div>`).join('')}
+                        </div>
+                        <div class="chat-input-area">
+                            <input type="text" id="chatInputText" placeholder="Введите сообщение...">
+                            <button class="btn" onclick="app.sendChatMessage('${trade.id}')">Отправить</button>
+                            <button class="btn btn-danger" onclick="app.openReportModal('${trade.id}')">Жалоба</button>
+                        </div>
+                    </div>
+                </div>
+            `, false);
+        }
+
+        sendChatMessage(tradeId) {
+            const input = document.getElementById('chatInputText');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const user = this.getCurrentUser();
+            let trades = this.getTrades();
+            const trade = trades.find(t => t.id === tradeId);
+            if (!trade) return;
+
+            trade.messages.push({ sender: user.username, text, system: false });
+            this.saveTrades(trades);
+            input.value = '';
+            
+            // Обновляем окно чата
+            const container = document.getElementById('tradeChatMessages');
+            container.innerHTML = trade.messages.map(m => `<div class="chat-msg ${m.system ? 'system' : ''}"><b>${m.sender}:</b> ${m.text}</div>`).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        promptRejectTradeModal(tradeId) {
+            this.showModal(`
+                <div class="modal-box" style="max-width: 450px;">
+                    <div class="modal-title">Вы точно хотите отклонить трейд?</div>
+                    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;">Этот процесс будет уже не предотвратить если вы нажмете на кнопку внизу.</p>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-danger" style="flex:1;" onclick="app.executeRejectTrade('${tradeId}')">Отклонить трейд</button>
+                        <button class="btn btn-secondary" style="flex:1;" onclick="app.closeModal()">Нет я передумал(а)</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        executeRejectTrade(tradeId) {
+            let trades = this.getTrades();
+            trades = trades.filter(t => t.id !== tradeId);
+            this.saveTrades(trades);
+            this.closeModal();
+            this.render();
+            alert('Трейд был успешно отклонен.');
+        }
+
+        promptAcceptTradeModal(tradeId) {
+            this.showModal(`
+                <div class="modal-box" style="max-width: 500px;">
+                    <div class="modal-title">Вы точно закончили трейд?</div>
+                    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 15px; font-size: 14px;">Убедитесь что вас не обманывают по валютам. Валюты можете посмотреть на <a href="https://supremevalues.com/" target="_blank" style="color: var(--accent-cyan);">supremevalues.com</a></p>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" style="flex:1; background: var(--success-green);" onclick="app.executeAcceptTrade('${tradeId}')">Принять трейд</button>
+                        <button class="btn btn-secondary" style="flex:1;" onclick="app.closeModal()">Нет я передумал принимать</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        executeAcceptTrade(tradeId) {
+            let trades = this.getTrades();
+            const tradeIndex = trades.findIndex(t => t.id === tradeId);
+            if (tradeIndex === -1) return;
+            const trade = trades[tradeIndex];
+
+            const user = this.getCurrentUser();
+            const finished = this.getFinishedTrades();
+            finished.push({
+                user1: trade.username,
+                user2: user.username,
+                timestamp: Date.now()
+            });
+            this.saveFinishedTrades(finished);
+
+            trades.splice(tradeIndex, 1);
+            this.saveTrades(trades);
+            this.closeModal();
+            this.render();
+            alert('Сделка успешно завершена и добавлена в законченные трейды!');
+        }
+
+        openCounterOfferModal(tradeId) {
+            alert('Функция встречного предложения активирована! Выберите свои предметы.');
+            this.openCreateTradeModal();
+        }
+
+        // Система жалоб
+        openReportModal(tradeId) {
+            this.showModal(`
+                <div class="modal-box" style="max-width: 450px;">
+                    <div class="modal-title">Жалоба на трейд</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; text-align: center;">Если у вас что-то случилось или человек с которым вы трейдитесь хочет вас заскамить, то нажмите продолжить.</p>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-danger" style="flex:1;" onclick="app.executeReport('${tradeId}')">Продолжить</button>
+                        <button class="btn btn-secondary" style="flex:1;" onclick="app.closeModal()">Закрыть</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        executeReport(tradeId) {
+            let trades = this.getTrades();
+            const trade = trades.find(t => t.id === tradeId);
+            if (trade) {
+                trade.messages.push({
+                    sender: 'SYSTEM [KerZikUs]',
+                    text: '⚠️ Администратор KerZikUs подключился к чату по жалобе пользователя!',
+                    system: true
+                });
+                this.saveTrades(trades);
+            }
+            this.closeModal();
+            alert('Жалоба отправлена! Администратор подключен к чату.');
+            this.openTradeDetail(tradeId);
+        }
+
+        // Настройки и удаление данных
+        updateThemeSetting() {
+            const color = document.getElementById('settingThemeColor').value;
+            const isBlack = document.getElementById('settingBlackLink').checked;
+            this.saveSettings({ colorTheme: color, isBlackThemeLinked: isBlack });
+            this.applyThemeColors();
+        }
+
+        userDeleteAllActiveTrades() {
+            const user = this.getCurrentUser();
+            if (!user) return;
+            let trades = this.getTrades();
+            trades = trades.filter(t => t.username !== user.username);
+            this.saveTrades(trades);
+            alert('Все ваши активные трейды удалены.');
+            this.render();
+        }
+
+        userDeleteTradeHistory() {
+            const user = this.getCurrentUser();
+            if (!user) return;
+            let finished = this.getFinishedTrades();
+            finished = finished.filter(f => f.user1 !== user.username && f.user2 !== user.username);
+            this.saveFinishedTrades(finished);
+            alert('История ваших трейдов очищена.');
+            this.render();
+        }
+
+        openChangePasswordModal() {
+            this.showModal(`
+                <div class="modal-box" style="max-width: 400px;">
+                    <span class="close-modal-x" onclick="app.closeModal()">&times;</span>
+                    <div class="modal-title">Изменить пароль</div>
+                    <div class="form-group">
+                        <label>Новый пароль</label>
+                        <input type="password" class="form-control" id="newPasswordInput" placeholder="Новый пароль">
+                    </div>
+                    <button class="btn" style="width: 100%; margin-top: 10px;" onclick="app.saveNewPassword()">Сохранить</button>
+                </div>
+            `);
+        }
+
+        saveNewPassword() {
+            const newPass = document.getElementById('newPasswordInput').value.trim();
+            if (!newPass) return;
+            const user = this.getCurrentUser();
+            let users = this.getUsers();
+            users = users.map(u => {
+                if (u.username === user.username) u.password = newPass;
+                return u;
+            });
+            this.saveUsers(users);
+            this.closeModal();
+            alert('Пароль успешно изменен!');
+        }
+
+        // Админ действия
+        adminDeleteTrade(tradeId) {
+            let trades = this.getTrades();
+            trades = trades.filter(t => t.id !== tradeId);
+            this.saveTrades(trades);
+            this.render();
+            alert('Трейд успешно удален администратором.');
+        }
+
+        // Модалки утилиты
+        showModal(htmlContent) {
+            const root = document.getElementById('modalRoot');
+            root.innerHTML = `<div class="modal-overlay">${htmlContent}</div>`;
+        }
+
+        closeModal() {
+            const root = document.getElementById('modalRoot');
+            root.innerHTML = '';
+        }
+    }
+
+    const app = new App();
+</script>
+</body>
+</html>
